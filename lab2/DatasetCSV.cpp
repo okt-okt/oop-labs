@@ -2,7 +2,7 @@
 
 
 
-void DatasetCSV::input(std::ifstream& file)
+void DatasetCSV::input(std::wifstream& file)
 {
 
 }

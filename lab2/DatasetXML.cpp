@@ -2,7 +2,7 @@
 
 
 
-void DatasetXML::input(std::ifstream& file)
+void DatasetXML::input(std::wifstream& file)
 {
 
 }
