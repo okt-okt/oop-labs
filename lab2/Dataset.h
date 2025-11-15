@@ -14,7 +14,7 @@ struct House
     unsigned int number;
 
 
-    bool operator==(const House& other)
+    bool operator==(const House& other) const
     {
         return street == other.street && number == other.number;
     }
@@ -22,7 +22,7 @@ struct House
 
     struct Hasher
     {
-        size_t operator()(const House& house)
+        size_t operator()(const House& house) const
         {
             return reinterpret_cast<size_t>(house.street) ^ (static_cast<size_t>(house.number) << 24);
         }
@@ -51,7 +51,7 @@ public:
         unsigned int floor, repetitions;
 
 
-        bool operator==(const DuplicateRecord& other)
+        bool operator==(const DuplicateRecord& other) const
         {
             return city == other.city && house == other.house && floor == other.floor;
         }
@@ -59,7 +59,7 @@ public:
 
         struct Hasher
         {
-            size_t operator()(const DuplicateRecord& record)
+            size_t operator()(const DuplicateRecord& record) const
             {
                 return reinterpret_cast<size_t>(record.city) ^ reinterpret_cast<size_t>(record.house) ^ (size_t(record.floor) << 31);
             }

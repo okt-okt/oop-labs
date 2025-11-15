@@ -4,11 +4,12 @@
 
 void Dataset::insert_data(const wchar_t* city, const wchar_t* street, unsigned int house, unsigned int floor)
 {
-    auto c = cities.find(city);
+    auto c = (cities[city], cities.find(city));
     const std::wstring* s = &*(c->second.streets.insert(street).first);
     auto h = c->second.houses[floor > 5 || !floor ? 0 : floor].insert({ s, house });
     if (!(h.second)) // found duplicate
         ++const_cast<unsigned int&>(duplicates.insert({ &(c->first), &*(h.first), floor, 1 }).first->repetitions);
+    //std::wcout << L"> добавлено [city=\"" << city << L"\", street=\"" << street << L"\", house=" << house << L", floor=" << floor << (h.second ? L"]" : L"] дубликат") << std::endl;
 }
 
 
@@ -34,7 +35,8 @@ void Dataset::count_house(std::wostream& out)
     {
         out << L"В городе \"" << c->first << L"\":\n";
         for (unsigned int i = 1; i < 6; ++i)
-            out << L"   " << i << L"-этажных домов: " << c->second.houses[i].size() << L'\n';
+            if (c->second.houses[i].size())
+                out << L"   " << i << L"-этажных домов: " << c->second.houses[i].size() << L'\n';
         if (c->second.houses[0].size())
             out << L"   домов иной этажности: " << c->second.houses[0].size() << L'\n';
         out << L'\n';
