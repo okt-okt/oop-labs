@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
-#include <unordered_set>
 #include <string>
 
 
@@ -10,32 +9,16 @@
 
 struct House
 {
-    const std::wstring* street;
-    unsigned int number;
-
-
-    bool operator==(const House& other) const
-    {
-        return street == other.street && number == other.number;
-    }
-
-
-    struct Hasher
-    {
-        size_t operator()(const House& house) const
-        {
-            return reinterpret_cast<size_t>(house.street) ^ (static_cast<size_t>(house.number) << 24);
-        }
-    };
+    unsigned int floor, repetetions = 0;
 };
 
 
 
 struct City
 {
-    std::wstring name;
-    std::unordered_set<std::wstring> streets;
-    std::unordered_set<House, House::Hasher> houses[6]; // grouped by floors: 6+, 1, 2, 3, 4, 5
+    // Key=address, value=House
+    std::unordered_map<std::wstring, House> houses;
+    unsigned int house_stats[5] {};
 };
 
 
@@ -43,34 +26,6 @@ struct City
 class Dataset
 {
 public:
-
-    struct DuplicateRecord
-    {
-        const std::wstring* city;
-        const House* house;
-        unsigned int floor, repetitions;
-
-
-        bool operator==(const DuplicateRecord& other) const
-        {
-            return city == other.city && house == other.house && floor == other.floor;
-        }
-
-
-        struct Hasher
-        {
-            size_t operator()(const DuplicateRecord& record) const
-            {
-                return reinterpret_cast<size_t>(record.city) ^ reinterpret_cast<size_t>(record.house) ^ (size_t(record.floor) << 31);
-            }
-        };
-    };
-
-
-public:
-
-    std::unordered_set<DuplicateRecord, DuplicateRecord::Hasher> duplicates;
-
     // Key=city name, value=City
     std::unordered_map<std::wstring, City> cities;
 
@@ -82,7 +37,7 @@ public:
 
     virtual void input(std::wifstream& file) = 0;
 
-    void insert_data(const wchar_t* city, const wchar_t* street, unsigned int house, unsigned int floor);
+    void insert_data(const wchar_t* city, const wchar_t* address, unsigned int floor);
 
     void print_dups(std::wostream& out);
     

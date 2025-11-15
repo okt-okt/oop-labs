@@ -2,28 +2,32 @@
 
 
 
-void Dataset::insert_data(const wchar_t* city, const wchar_t* street, unsigned int house, unsigned int floor)
+void Dataset::insert_data(const wchar_t* city, const wchar_t* address, unsigned int floor)
 {
-    auto c = (cities[city], cities.find(city));
-    const std::wstring* s = &*(c->second.streets.insert(street).first);
-    auto h = c->second.houses[floor > 5 || !floor ? 0 : floor].insert({ s, house });
-    if (!(h.second)) // found duplicate
-        ++const_cast<unsigned int&>(duplicates.insert({ &(c->first), &*(h.first), floor, 1 }).first->repetitions);
-    //std::wcout << L"> добавлено [city=\"" << city << L"\", street=\"" << street << L"\", house=" << house << L", floor=" << floor << (h.second ? L"]" : L"] дубликат") << std::endl;
+    auto& c = cities[city];
+    c.house_stats[floor - 1]++;
+    auto& h = c.houses[address];
+    h.floor = floor;
+    h.repetetions++;
 }
 
 
 
 void Dataset::print_dups(std::wostream& out)
 {
-    if (duplicates.size())
-    {
-        out << L"¬ наборе данных были обнаружены следующие дубликаты:\n";
-        for (auto i = duplicates.begin(); i != duplicates.end(); ++i)
-            out << L"   " << i->repetitions << L" x [city=\"" << *(i->city) << L"\", street=\"" << *(i->house->street) << L"\", house=" << i->house->number << L", floor=" << i->floor << L"]\n";
-        out << L'\n';
-    }
-    else
+    bool first = true;
+    for (auto c = cities.begin(); c != cities.end(); ++c)
+        for (auto a = c->second.houses.begin(); a != c->second.houses.end(); ++a)
+            if (a->second.repetetions > 1)
+            {
+                if (first)
+                {
+                    out << L"¬о врем€ обработки файла обнаружены следующие дублирующиес€ записи:\n";
+                    first = false;
+                }
+                //
+            }
+    if (first)
         out << L"ƒубликатов не было обнаружено.\n\n";
 }
 
@@ -34,11 +38,9 @@ void Dataset::count_house(std::wostream& out)
     for (auto c = cities.begin(); c != cities.end(); ++c)
     {
         out << L"¬ городе \"" << c->first << L"\":\n";
-        for (unsigned int i = 1; i < 6; ++i)
-            if (c->second.houses[i].size())
-                out << L"   " << i << L"-этажных домов: " << c->second.houses[i].size() << L'\n';
-        if (c->second.houses[0].size())
-            out << L"   домов иной этажности: " << c->second.houses[0].size() << L'\n';
+        for (unsigned int i = 0; i < 5; ++i)
+            if (c->second.house_stats[i])
+                out << L"   " << (i + 1) << L"-этажных домов: " << c->second.house_stats[i] << L'\n';
         out << L'\n';
     }
 }
