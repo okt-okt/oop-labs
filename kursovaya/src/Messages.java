@@ -89,12 +89,4 @@ public class Messages{
         keyboard.setKeyboard(list);
         return keyboard;
     }
-
-    public void sendPhoto(Long chatId, String photoUrl, String caption) throws TelegramApiException {
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setChatId(chatId.toString());
-        sendPhoto.setPhoto(new InputFile(photoUrl));
-        sendPhoto.setCaption(caption);
-        bot.execute(sendPhoto);
-    }
 }
